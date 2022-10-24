@@ -1,47 +1,19 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native'
 import React from 'react'
+import TodoItem from './TodoItem'
 
-const CompletedTodoItem = ({ id, task, deleteCompletedTodoHandler, revertTodoHandler }) => {
+export default function CompletedTodo({ completedTodo, deleteTodoHandler, revertTodoHandler }) {
     return (
-        <View style={[styles.todoItem, { justifyContent: 'space-between', paddingVertical: 6, }]}>
-            <View style={styles.todoItem} >
-                <Image source={require('../assets/icons/checked.png')} style={[styles.deleteIcon, { marginLeft: 0, }]} />
-                <Text style={styles.itemText}>{task}</Text>
-            </View>
-            <View style={styles.actions}>
-                <TouchableOpacity onPress={() => {
-                    console.warn(`reverting completed todo with id ${id}`);
-                    revertTodoHandler(id)
-                }}>
-                    <Image style={styles.deleteIcon} source={require('../assets/icons/revert.png')} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => {
-                    console.warn(`deleting completed todo with id ${id}`);
-                    deleteCompletedTodoHandler(id)
-                }}>
-                    <Image style={styles.deleteIcon} source={require('../assets/icons/delete.png')} />
-                </TouchableOpacity>
-            </View>
-        </View>
-    )
-}
-
-export default function CompletedTodo({ completedTodo, deleteCompletedTodoHandler, revertTodoHandler }) {
-    return (
-        <View style={styles.container}>
+        <View >
             <Text style={styles.header}>Completed Tasks</Text>
             {completedTodo.map((task) => (
-                <CompletedTodoItem
+                <TodoItem
                     key={task.id}
-                    task={task.task}
-                    id={task.id}
+                    task={task}
                     revertTodoHandler={revertTodoHandler}
-                    deleteCompletedTodoHandler={deleteCompletedTodoHandler}
+                    deleteTodoHandler={deleteTodoHandler}
                 />
             ))}
-            {/* <CompletedTodoItem />
-            <CompletedTodoItem />
-            <CompletedTodoItem /> */}
         </View>
     )
 }
@@ -53,10 +25,6 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         fontWeight: '500',
         color: '#111',
-    },
-    container: {
-        // backgroundColor: '#339977',
-        // paddingHorizontal: 20,
     },
     todoItem: {
         flexDirection: 'row',

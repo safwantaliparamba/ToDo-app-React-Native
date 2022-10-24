@@ -1,64 +1,66 @@
-import { View, Text, ScrollView, StyleSheet, SafeAreaView, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import Todo from './src/components/Todo';
 import CompletedTodo from './src/components/CompletedTodo';
 
 
 export default function App() {
-	const [todo, setTodo] = useState([{
-		id: 0, task: 'buy groceries'
-	}])
-	const [completedTodo, setCompletedTodo] = useState([{
-		id: 1, task: 'buy some eggs'
-	}])
+	const [todo, setTodo] = useState([
+		{
+			id: 0, task: 'buy groceries', isCompleted: false
+		},
+		{
+			id: 1, task: 'clean house', isCompleted: false
+		},
+		{
+			id: 2, task: 'do some projects', isCompleted: true
+		}
+	])
 	const [todoInput, setTodoInput] = useState('')
-	const [idCount, setIdCount] = useState(2)
+	const [idCount, setIdCount] = useState(3)
 
-	const addToTodoHandler = () => {
-		setTodo([...todo, {
-			id: idCount,
-			task: todoInput
-		}])
-		setTodoInput('')
-		setIdCount(prev => prev + 1)
-		console.log('completedTodo', completedTodo);
-		console.log('todo', todo);
+
+	// methodsto handle todo
+
+	function addToTodoHandler() {
+		if (todoInput) {
+			setTodo([...todo, {
+				id: idCount,
+				task: todoInput,
+				isCompleted: false,
+			}]);
+			setTodoInput('');
+			setIdCount(prev => prev + 1);
+			console.log('todo', todo);
+		}
 	}
 
-	const addToCompletedTodoHandler = (id) => {
-		const newCompletedTodo = todo.filter(item => item.id === id)[0]
-		const filteredTodo = todo.filter(item => item.id !== id)
-		setCompletedTodo([...completedTodo, newCompletedTodo])
-		setTodo(filteredTodo)
-		console.log('todo', todo);
-	}
-
-	const revertTodoHandler = (id) => {
-		const uncompletedTodo = completedTodo.filter(item => item.id === id)[0]
-		const filteredCompletedTodo = completedTodo.filter(item => item.id !== id)
-		setTodo([...todo, uncompletedTodo])
-		setCompletedTodo(filteredCompletedTodo)
-	}
-
-	const deleteTodoHandler = (id) => {
-		const filteredTodo = todo.filter(todo => todo.id !== id)
+	const deleteTodoHandler = (task) => {
+		const filteredTodo = todo.filter(todo => todo.id !== task.id)
 		setTodo(filteredTodo)
 	}
-
-	const deleteCompletedTodoHandler = (id) => {
-		const filteredCompletedTodo = completedTodo.filter(todo => todo.id !== id)
-		setCompletedTodo(filteredCompletedTodo)
+	const addToCompletedTodoHandler = (task) => {
+		const filteredTodo = todo.filter(item => item.id !== task.id)
+		task.isCompleted = true;
+		setTodo([...filteredTodo, task])
 	}
+
+	const revertTodoHandler = (task) => {
+		const filteredTodo = todo.filter(item => item.id !== task.id)
+		task.isCompleted = false;
+		setTodo([...filteredTodo, task])
+	}
+
 
 
 	return (
-		<SafeAreaView style={styles.mainContainer}>
+		<ScrollView style={styles.mainContainer}>
 			<View style={styles.mainHeaderWrapper}>
 				<Text style={styles.mainHeader}>ToDo App</Text>
 			</View>
 			{/* todo list  */}
 			<Todo
-				todo={todo}
+				todo={todo.filter(item => !item.isCompleted)}
 				addToCompletedTodoHandler={addToCompletedTodoHandler}
 				deleteTodoHandler={deleteTodoHandler}
 			/>
@@ -82,11 +84,11 @@ export default function App() {
 			</View>
 			{/* completed todos  */}
 			<CompletedTodo
-				completedTodo={completedTodo}
+				completedTodo={todo.filter(item => item.isCompleted)}
 				revertTodoHandler={revertTodoHandler}
-				deleteCompletedTodoHandler={deleteCompletedTodoHandler}
+				deleteTodoHandler={deleteTodoHandler}
 			/>
-		</SafeAreaView>
+		</ScrollView>
 	);
 }
 
